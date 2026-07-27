@@ -1,2 +1,2 @@
--- Joint work
+-- Primary owner: Karan | Reviewer: Tushar
 -- TODO: Insert at least 10 realistic rows into every shared table.

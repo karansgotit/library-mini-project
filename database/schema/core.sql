@@ -1,2 +1,2 @@
--- Joint work
+-- Primary owner: Karan | Reviewer: Tushar
 -- TODO: Create shared tables, including Member and shared lookup tables.

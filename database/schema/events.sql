@@ -1,3 +1,3 @@
--- Tushar's event-domain work, reviewed jointly
+-- Primary owner: Tushar | Reviewer: Karan
 -- TODO: Create event, room, audience, registration, employee, volunteer,
 -- and help-request tables.

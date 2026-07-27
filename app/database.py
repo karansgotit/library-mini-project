@@ -1,4 +1,4 @@
-"""Shared SQLite connection utilities for the library application."""
+"""Karan-owned SQLite connection utilities for the library application."""
 
 from pathlib import Path
 import sqlite3

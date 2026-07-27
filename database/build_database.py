@@ -1,4 +1,4 @@
-"""Build a fresh development copy of library.db from the SQL source files."""
+"""Karan-owned builder for a fresh development copy of library.db."""
 
 from pathlib import Path
 import sqlite3

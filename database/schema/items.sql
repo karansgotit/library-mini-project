@@ -1,2 +1,2 @@
--- Karan's item-domain work, reviewed jointly
+-- Primary owner: Karan | Reviewer: Tushar
 -- TODO: Create item, copy, loan, fine, and donation tables.

@@ -1,4 +1,4 @@
-"""Joint end-to-end tests for the complete library application."""
+"""Karan-owned end-to-end tests for the complete library application."""
 
 import pytest
 

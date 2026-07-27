@@ -1,4 +1,4 @@
-"""Joint tests for the database schema, constraints, and sample data."""
+"""Karan-owned tests for the database schema, constraints, and sample data."""
 
 import pytest
 

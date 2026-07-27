@@ -1,2 +1,2 @@
--- Tushar's event-domain sample data, reviewed jointly
+-- Primary owner: Tushar | Reviewer: Karan
 -- TODO: Insert at least 10 realistic rows into every event-domain table.

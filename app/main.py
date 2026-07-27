@@ -1,4 +1,4 @@
-"""Terminal menu for the library database application."""
+"""Karan-owned terminal menu integrating all eight application features."""
 
 
 MENU_OPTIONS = {

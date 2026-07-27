@@ -1,2 +1,2 @@
--- Joint work
+-- Primary owner: Karan | Reviewer: Tushar
 -- TODO: Add shared integrity triggers and any required indexes.

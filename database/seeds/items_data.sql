@@ -1,2 +1,2 @@
--- Karan's item-domain sample data, reviewed jointly
+-- Primary owner: Karan | Reviewer: Tushar
 -- TODO: Insert at least 10 realistic rows into every item-domain table.
