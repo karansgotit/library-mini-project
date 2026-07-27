@@ -1,0 +1,3 @@
+-- Tushar's event-domain work, reviewed jointly
+-- TODO: Create event, room, audience, registration, employee, volunteer,
+-- and help-request tables.

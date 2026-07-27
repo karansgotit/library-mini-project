@@ -1,0 +1,2 @@
+-- Karan's item-domain work, reviewed jointly
+-- TODO: Create item, copy, loan, fine, and donation tables.

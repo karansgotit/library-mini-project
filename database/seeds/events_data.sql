@@ -1,0 +1,2 @@
+-- Tushar's event-domain sample data, reviewed jointly
+-- TODO: Insert at least 10 realistic rows into every event-domain table.

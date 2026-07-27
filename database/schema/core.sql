@@ -1,0 +1,2 @@
+-- Joint work
+-- TODO: Create shared tables, including Member and shared lookup tables.

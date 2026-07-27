@@ -1,0 +1,2 @@
+-- Joint work
+-- TODO: Add shared integrity triggers and any required indexes.
