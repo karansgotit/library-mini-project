@@ -93,3 +93,5 @@ INSERT INTO audience (first_name, last_name, email, phone) VALUES
 (9, 2,  6, 'Projector not working',           'Presenter cannot connect laptop to room projector.',  'resolved',     '2026-08-28 14:15'),
 (NULL, 5, 2, 'General billing question',      'Question about an invoice unrelated to a specific event.', 'open',    NULL);
  
+
+ 

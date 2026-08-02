@@ -58,18 +58,18 @@ CREATE TABLE registration (
 );
  
 
- CREATE TABLE volunteer (
+CREATE TABLE volunteer (
     volunteer_id  SERIAL PRIMARY KEY,
-    first_name    VARCHAR(60) NOT NULL,
-    last_name     VARCHAR(60) NOT NULL,
-    email         VARCHAR(255) NOT NULL UNIQUE,
-    phone         VARCHAR(13),
+    first_name    VARCHAR(100),
+    last_name     VARCHAR(100),
+    email         VARCHAR(255) UNIQUE,
+    phone         VARCHAR(20),
     event_id      INTEGER REFERENCES event(event_id) ON DELETE SET NULL,
-    role          VARCHAR(50),
+    audience_id   INTEGER REFERENCES audience(audience_id) ON DELETE SET NULL,
+    role          VARCHAR(100),
     created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
  
-
 CREATE TABLE help_request (
     help_request_id   SERIAL PRIMARY KEY,
     event_id          INTEGER REFERENCES event(event_id) ON DELETE SET NULL,
