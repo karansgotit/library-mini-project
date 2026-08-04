@@ -1,45 +1,13 @@
-
 CREATE TABLE Item (
     ItemID            INTEGER PRIMARY KEY,
     Title             TEXT NOT NULL,
+    CreatorName       TEXT,
     CollectionStatus  TEXT NOT NULL
         CHECK (CollectionStatus IN (
             'Prospective',
             'InCollection',
             'Removed'
-    ))
-);
-
-CREATE TABLE Creator (
-    CreatorID    INTEGER PRIMARY KEY,
-    CreatorName  TEXT NOT NULL
-);
-
-CREATE TABLE ItemCreator (
-    ItemID      INTEGER NOT NULL,
-    CreatorID   INTEGER NOT NULL,
-    CreatorRole TEXT NOT NULL
-        CHECK (CreatorRole IN (
-            'Author',
-            'Artist',
-            'Editor',
-            'Illustrator',
-            'Translator',
-            'Composer',
-            'Performer',
-            'Narrator',
-            'Photographer',
-            'Contributor'
-        )),
-
-    PRIMARY KEY (ItemID, CreatorID, CreatorRole),
-
-    FOREIGN KEY (ItemID)
-        REFERENCES Item(ItemID)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY (CreatorID)
-        REFERENCES Creator(CreatorID)
+        ))
 );
 
 CREATE TABLE PrintBook (
@@ -130,15 +98,9 @@ CREATE TABLE Loan (
     MemberID    INTEGER NOT NULL,
     ItemID      INTEGER NOT NULL,
     CopyNumber  INTEGER NOT NULL,
-    BorrowDate  TEXT NOT NULL
-        CHECK (BorrowDate IS date(BorrowDate, '+0 days')),
-    DueDate     TEXT NOT NULL
-        CHECK (DueDate IS date(DueDate, '+0 days')),
-    ReturnDate  TEXT
-        CHECK (
-            ReturnDate IS NULL
-            OR ReturnDate IS date(ReturnDate, '+0 days')
-        ),
+    BorrowDate  TEXT NOT NULL,
+    DueDate     TEXT NOT NULL,
+    ReturnDate  TEXT,
 
     FOREIGN KEY (MemberID)
         REFERENCES Member(MemberID),
@@ -167,19 +129,14 @@ CREATE TABLE Fine (
             'LostItem'
         )),
     AmountCents   INTEGER NOT NULL,
-    AssessedDate  TEXT NOT NULL
-        CHECK (AssessedDate IS date(AssessedDate, '+0 days')),
+    AssessedDate  TEXT NOT NULL,
     Status        TEXT NOT NULL
         CHECK (Status IN (
             'Unpaid',
             'Paid',
             'Waived'
         )),
-    ResolvedDate  TEXT
-        CHECK (
-            ResolvedDate IS NULL
-            OR ResolvedDate IS date(ResolvedDate, '+0 days')
-        ),
+    ResolvedDate  TEXT,
 
     PRIMARY KEY (LoanID, FineNumber),
 
@@ -188,29 +145,13 @@ CREATE TABLE Fine (
         ON DELETE CASCADE,
 
     CHECK (FineNumber > 0),
-    CHECK (AmountCents > 0),
-    CHECK (
-        ResolvedDate IS NULL
-        OR ResolvedDate >= AssessedDate
-    ),
-    CHECK (
-        (
-            Status = 'Unpaid'
-            AND ResolvedDate IS NULL
-        )
-        OR
-        (
-            Status IN ('Paid', 'Waived')
-            AND ResolvedDate IS NOT NULL
-        )
-    )
+    CHECK (AmountCents > 0)
 );
 
 CREATE TABLE DonationOffer (
     DonationOfferID     INTEGER PRIMARY KEY,
     MemberID            INTEGER NOT NULL,
-    OfferDateTime       TEXT NOT NULL
-        CHECK (OfferDateTime IS datetime(OfferDateTime, '+0 seconds')),
+    OfferDateTime       TEXT NOT NULL,
     OfferDescription    TEXT NOT NULL,
     OfferStatus         TEXT NOT NULL
         CHECK (OfferStatus IN (
@@ -227,22 +168,6 @@ CREATE TABLE DonationOffer (
     FOREIGN KEY (ProducedItemID, ProducedCopyNumber)
         REFERENCES Copy(ItemID, CopyNumber),
 
-    CHECK (
-        (
-            ProducedItemID IS NULL
-            AND ProducedCopyNumber IS NULL
-        )
-        OR
-        (
-            ProducedItemID IS NOT NULL
-            AND ProducedCopyNumber IS NOT NULL
-        )
-    ),
-    CHECK (
-        OfferStatus = 'Accepted'
-        OR ProducedItemID IS NULL
-    ),
-
     UNIQUE (ProducedItemID, ProducedCopyNumber)
 );
 
@@ -254,9 +179,3 @@ ON Loan(ItemID, CopyNumber);
 
 CREATE INDEX DonationOfferMemberIndex
 ON DonationOffer(MemberID);
-
-CREATE INDEX ItemCreatorCreatorIndex
-ON ItemCreator(CreatorID);
-
-CREATE INDEX CreatorNameIndex
-ON Creator(CreatorName);

@@ -1,4 +1,3 @@
-
 CREATE TABLE Room (
     RoomID      INTEGER PRIMARY KEY,
     RoomNumber  TEXT NOT NULL UNIQUE,
@@ -12,10 +11,9 @@ CREATE TABLE Event (
     EventTitle          TEXT NOT NULL,
     EventCategory       TEXT NOT NULL,
     Description         TEXT,
-    StartDateTime       TEXT NOT NULL
-        CHECK (StartDateTime IS datetime(StartDateTime, '+0 seconds')),
-    EndDateTime         TEXT NOT NULL
-        CHECK (EndDateTime IS datetime(EndDateTime, '+0 seconds')),
+    TargetAudience      TEXT NOT NULL,
+    StartDateTime       TEXT NOT NULL,
+    EndDateTime         TEXT NOT NULL,
     EventStatus         TEXT NOT NULL
         CHECK (EventStatus IN (
             'Scheduled',
@@ -25,54 +23,25 @@ CREATE TABLE Event (
     RegistrationLimit   INTEGER,
     CancellationReason  TEXT,
     RoomID              INTEGER NOT NULL,
+    OrganizerStaffID    INTEGER NOT NULL,
 
     FOREIGN KEY (RoomID)
         REFERENCES Room(RoomID),
+
+    FOREIGN KEY (OrganizerStaffID)
+        REFERENCES Staff(StaffID),
 
     CHECK (EndDateTime > StartDateTime),
     CHECK (
         RegistrationLimit IS NULL
         OR RegistrationLimit > 0
-    ),
-    CHECK (
-        (
-            EventStatus = 'Cancelled'
-            AND CancellationReason IS NOT NULL
-        )
-        OR
-        (
-            EventStatus IN ('Scheduled', 'Completed')
-            AND CancellationReason IS NULL
-        )
     )
-);
-
-CREATE TABLE Audience (
-    AudienceID    INTEGER PRIMARY KEY,
-    AudienceName  TEXT NOT NULL UNIQUE
-);
-
-CREATE TABLE EventAudience (
-    EventID     INTEGER NOT NULL,
-    AudienceID  INTEGER NOT NULL,
-
-    PRIMARY KEY (EventID, AudienceID),
-
-    FOREIGN KEY (EventID)
-        REFERENCES Event(EventID),
-
-    FOREIGN KEY (AudienceID)
-        REFERENCES Audience(AudienceID)
 );
 
 CREATE TABLE Registration (
     MemberID              INTEGER NOT NULL,
     EventID               INTEGER NOT NULL,
-    RegistrationDateTime  TEXT NOT NULL
-        CHECK (
-            RegistrationDateTime IS
-            datetime(RegistrationDateTime, '+0 seconds')
-        ),
+    RegistrationDateTime  TEXT NOT NULL,
     RegistrationStatus    TEXT NOT NULL
         CHECK (RegistrationStatus IN (
             'Registered',
@@ -90,28 +59,11 @@ CREATE TABLE Registration (
         REFERENCES Event(EventID)
 );
 
-CREATE TABLE EventOrganizer (
-    StaffID  INTEGER NOT NULL,
-    EventID  INTEGER NOT NULL,
-
-    PRIMARY KEY (StaffID, EventID),
-
-    FOREIGN KEY (StaffID)
-        REFERENCES Staff(StaffID),
-
-    FOREIGN KEY (EventID)
-        REFERENCES Event(EventID)
-);
-
 CREATE TABLE VolunteerApplication (
     VolunteerApplicationID  INTEGER PRIMARY KEY,
     MemberID                 INTEGER NOT NULL,
     EventID                  INTEGER,
-    ApplicationDateTime      TEXT NOT NULL
-        CHECK (
-            ApplicationDateTime IS
-            datetime(ApplicationDateTime, '+0 seconds')
-        ),
+    ApplicationDateTime      TEXT NOT NULL,
     ApplicationStatus        TEXT NOT NULL
         CHECK (ApplicationStatus IN (
             'Pending',
@@ -131,10 +83,7 @@ CREATE TABLE HelpRequest (
     HelpRequestID     INTEGER PRIMARY KEY,
     MemberID          INTEGER NOT NULL,
     StaffID           INTEGER,
-    RequestDateTime   TEXT NOT NULL
-        CHECK (
-            RequestDateTime IS datetime(RequestDateTime, '+0 seconds')
-        ),
+    RequestDateTime   TEXT NOT NULL,
     QuestionText      TEXT NOT NULL,
     RequestStatus     TEXT NOT NULL
         CHECK (RequestStatus IN (
@@ -142,53 +91,23 @@ CREATE TABLE HelpRequest (
             'InProgress',
             'Resolved'
         )),
-    ResolvedDateTime  TEXT
-        CHECK (
-            ResolvedDateTime IS NULL
-            OR ResolvedDateTime IS datetime(ResolvedDateTime, '+0 seconds')
-        ),
+    ResolvedDateTime  TEXT,
 
     FOREIGN KEY (MemberID)
         REFERENCES Member(MemberID),
 
     FOREIGN KEY (StaffID)
-        REFERENCES Staff(StaffID),
-
-    CHECK (
-        ResolvedDateTime IS NULL
-        OR ResolvedDateTime >= RequestDateTime
-    ),
-    CHECK (
-        (
-            RequestStatus = 'Pending'
-            AND ResolvedDateTime IS NULL
-        )
-        OR
-        (
-            RequestStatus = 'InProgress'
-            AND StaffID IS NOT NULL
-            AND ResolvedDateTime IS NULL
-        )
-        OR
-        (
-            RequestStatus = 'Resolved'
-            AND StaffID IS NOT NULL
-            AND ResolvedDateTime IS NOT NULL
-        )
-    )
+        REFERENCES Staff(StaffID)
 );
 
 CREATE INDEX EventRoomIndex
 ON Event(RoomID);
 
-CREATE INDEX EventAudienceAudienceIndex
-ON EventAudience(AudienceID);
+CREATE INDEX EventOrganizerStaffIndex
+ON Event(OrganizerStaffID);
 
 CREATE INDEX RegistrationEventIndex
 ON Registration(EventID);
-
-CREATE INDEX EventOrganizerEventIndex
-ON EventOrganizer(EventID);
 
 CREATE INDEX VolunteerApplicationMemberIndex
 ON VolunteerApplication(MemberID);
