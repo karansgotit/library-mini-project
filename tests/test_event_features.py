@@ -231,8 +231,3 @@ def test_ask_librarian_long_question(mock_get_conn):
     assert result["RequestStatus"] == "Pending"
     conn.commit.assert_called_once()
 
-
-@pytest.mark.skip(reason="Event features placeholder test")
-def test_event_features_placeholder():
-    """Placeholder for event features tests."""
-    pass
