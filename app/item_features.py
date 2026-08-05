@@ -3,7 +3,7 @@
 import sqlite3
 from datetime import date, datetime, timedelta
 
-from database import get_connection
+from app.database import get_connection
 
 LOAN_PERIOD_DAYS = 14
 

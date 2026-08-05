@@ -76,12 +76,10 @@ INSERT INTO Copy (ItemID, CopyNumber, Condition) VALUES
 (2, 3, 'Usable'),
 (2, 4, 'Usable'),
 (3, 1, 'Usable'),
-(4, 1, 'Retired'),
 (5, 1, 'Usable'),
 (6, 1, 'Usable'),
 (7, 1, 'Usable'),
 (8, 1, 'Usable'),
-(9, 1, 'Retired'),
 (10, 1, 'Usable'),
 (11, 1, 'Usable'),
 (11, 2, 'UnderRepair'),
@@ -95,7 +93,6 @@ INSERT INTO Copy (ItemID, CopyNumber, Condition) VALUES
 -- =========================================================================
 INSERT INTO Loan (LoanID, MemberID, ItemID, CopyNumber, BorrowDate, DueDate, ReturnDate) VALUES
 (1,  1,  1,  1, '2026-07-01', '2026-07-15', NULL),
-(2,  2,  2,  2, '2026-07-05', '2026-07-19', '2026-07-18'),
 (3,  3,  3,  1, '2026-07-10', '2026-07-24', NULL),
 (4,  5,  5,  1, '2026-06-20', '2026-07-04', '2026-07-02'),
 (5,  7,  6,  1, '2026-07-12', '2026-07-26', NULL),
@@ -106,18 +103,15 @@ INSERT INTO Loan (LoanID, MemberID, ItemID, CopyNumber, BorrowDate, DueDate, Ret
 (10, 5,  1,  2, '2026-06-01', '2026-06-15', '2026-06-18'),
 (11, 7,  7,  1, '2026-07-22', '2026-08-05', NULL),
 (12, 2,  5,  1, '2026-07-10', '2026-07-24', NULL),
-(13, 9,  2,  1, '2026-07-20', '2026-08-03', NULL),
-(14, 6,  13, 1, '2026-04-01', '2026-04-15', NULL);
+(13, 9,  2,  1, '2026-07-20', '2026-08-03', NULL);
 
 -- =========================================================================
 -- Fine
 -- =========================================================================
 INSERT INTO Fine (LoanID, FineNumber, FineType, AmountCents, AssessedDate, Status, ResolvedDate) VALUES
-(2,  1, 'Damage',   1500, '2026-07-18', 'Unpaid', NULL),
 (6,  1, 'Overdue',   100, '2026-07-02', 'Waived', '2026-07-05'),
 (8,  1, 'Overdue',   250, '2026-05-20', 'Paid',   '2026-05-25'),
-(10, 1, 'Overdue',   300, '2026-06-18', 'Paid',   '2026-06-20'),
-(14, 1, 'LostItem', 2000, '2026-05-01', 'Unpaid', NULL);
+(10, 1, 'Overdue',   300, '2026-06-18', 'Paid',   '2026-06-20');
 
 -- =========================================================================
 -- DonationOffer
