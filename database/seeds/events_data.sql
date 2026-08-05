@@ -1,97 +1,76 @@
--- Primary owner: Tushar | Reviewer: Karan
--- TODO: Insert at least 10 realistic rows into every event-domain table.
+-- =========================================================================
+-- Room
+-- =========================================================================
+INSERT INTO Room (RoomID, RoomNumber, Capacity) VALUES
+(1,  'GB-1',     400),
+(2,  'AUD-A',    250),
+(3,  '101',       30),
+(4,  '102',       30),
+(5,  'SKY-1',    120),
+(6,  'WS-B',      50),
+(7,  'EXH-1',    600),
+(8,  'BRD-1',     16),
+(9,  'OUT-PAV',  200),
+(10, 'MEDIA-1',   40);
 
+-- =========================================================================
+-- Event
+-- =========================================================================
+INSERT INTO Event (EventID, EventTitle, EventCategory, Description, TargetAudience, StartDateTime, EndDateTime, EventStatus, RegistrationLimit, CancellationReason, RoomID, OrganizerStaffID) VALUES
+(1,  'Annual Tech Summit',         'Conference',  'Full-day summit on emerging tech trends.',        'Technology professionals',      '2026-09-10 09:00:00', '2026-09-10 17:00:00', 'Scheduled', 350, NULL, 1,  1),
+(2,  'Product Launch: Nova',       'Launch',      'Launch event for the new Nova product line.',     'Press and customers',           '2026-09-15 18:00:00', '2026-09-15 21:00:00', 'Scheduled', 500, NULL, 7,  3),
+(3,  'Board Strategy Meeting',     'Meeting',     'Quarterly strategy review with the board.',       'Board members',                 '2026-08-05 10:00:00', '2026-08-05 13:00:00', 'Completed', 16,  NULL, 8,  2),
+(4,  'Community Volunteer Fair',   'Fair',        'Fair connecting volunteers with local nonprofits.','General public',                '2026-08-20 11:00:00', '2026-08-20 16:00:00', 'Scheduled', 180, NULL, 9,  7),
+(5,  'Data Science Workshop',      'Workshop',    'Hands-on workshop covering ML fundamentals.',     'Students and professionals',    '2026-08-12 13:00:00', '2026-08-12 17:00:00', 'Scheduled', 45,  NULL, 6,  1),
+(6,  'Investor Roundtable',        'Meeting',     'Closed-door roundtable with key investors.',      'Investors',                     '2026-08-01 09:00:00', '2026-08-01 11:00:00', 'Completed', 25,  NULL, 3,  2),
+(7,  'Sales Kickoff 2026',         'Conference',  'Annual sales team kickoff and training.',         'Sales staff',                   '2026-09-25 08:30:00', '2026-09-25 16:00:00', 'Scheduled', 240, NULL, 2,  1),
+(8,  'Charity Gala Dinner',        'Fundraiser',  'Black-tie fundraising dinner for local charities.','Donors and community members', '2026-10-02 18:30:00', '2026-10-02 23:00:00', 'Scheduled', 380, NULL, 1,  5),
+(9,  'IT Infrastructure Briefing', 'Briefing',    'Internal briefing on new IT systems rollout.',    'Staff',                         '2026-08-28 14:00:00', '2026-08-28 15:30:00', 'Scheduled', 28,  NULL, 4,  6),
+(10, 'Media & Press Day',          'Press',       'Press event with hands-on product demos.',        'Media',                         '2026-07-15 10:00:00', '2026-07-15 14:00:00', 'Cancelled', NULL,'Venue unavailable due to construction delay', 10, 3);
 
-INSERT INTO room (name, location, capacity) VALUES
-('Grand Ballroom',        'Main Building, 1st Floor',        400),
-('Auditorium A',          'North Wing, Ground Floor',        250),
-('Conference Room 101',   'East Wing, 1st Floor',             30),
-('Conference Room 102',   'East Wing, 1st Floor',             30),
-('Sky Lounge',            'Main Building, Rooftop',          120),
-('Workshop Studio B',     'South Wing, 2nd Floor',            50),
-('Exhibition Hall',       'Main Building, Ground Floor',     600),
-('Boardroom',             'North Wing, 3rd Floor',            16),
-('Outdoor Pavilion',      'Garden Courtyard',                200),
-('Media Lab',             'South Wing, 1st Floor',            40);
- 
+-- =========================================================================
+-- Registration
+-- =========================================================================
+INSERT INTO Registration (MemberID, EventID, RegistrationDateTime, RegistrationStatus) VALUES
+(1,  1, '2026-08-01 10:00:00', 'Registered'),
+(2,  1, '2026-08-02 11:00:00', 'Registered'),
+(3,  1, '2026-08-03 09:30:00', 'Registered'),
+(4,  2, '2026-08-05 14:00:00', 'Registered'),
+(5,  2, '2026-08-06 15:30:00', 'Registered'),
+(6,  4, '2026-08-10 10:00:00', 'Registered'),
+(7,  4, '2026-08-11 11:15:00', 'Attended'),
+(8,  5, '2026-08-01 09:00:00', 'Registered'),
+(9,  7, '2026-08-15 13:00:00', 'Registered'),
+(10, 7, '2026-08-16 10:45:00', 'Cancelled'),
+(1,  8, '2026-08-20 12:00:00', 'Registered'),
+(2,  9, '2026-08-22 09:15:00', 'Registered');
 
- INSERT INTO employee (first_name, last_name, email, phone, role, department, hired_at) VALUES
-('Tushar',  'Mehta',     'tushar.mehta@company.com',   '555-0101', 'Events Manager',      'Events',        '2021-03-15'),
-('Karan',   'Shah',      'karan.shah@company.com',     '555-0102', 'Operations Lead',     'Operations',    '2020-07-01'),
-('Priya',   'Nair',      'priya.nair@company.com',     '555-0103', 'Marketing Coordinator','Marketing',    '2022-01-10'),
-('Alex',    'Johnson',   'alex.johnson@company.com',   '555-0104', 'Logistics Coordinator','Operations',   '2019-11-20'),
-('Maria',   'Garcia',    'maria.garcia@company.com',   '555-0105', 'Guest Relations Lead','Guest Services', '2023-02-28'),
-('Wei',     'Zhang',     'wei.zhang@company.com',      '555-0106', 'IT Support Specialist','IT',           '2021-09-05'),
-('Sara',    'Kim',       'sara.kim@company.com',       '555-0107', 'Volunteer Coordinator','Events',       '2022-06-14'),
-('David',   'Brown',     'david.brown@company.com',    '555-0108', 'Finance Analyst',     'Finance',       '2018-04-02'),
-('Layla',   'Hassan',    'layla.hassan@company.com',   '555-0109', 'Catering Manager',    'Operations',    '2020-12-01'),
-('Tom',     'Wilson',    'tom.wilson@company.com',     '555-0110', 'Security Lead',       'Security',      '2019-08-17');
- 
- INSERT INTO event (name, description, room_id, organizer_id, start_time, end_time, status) VALUES
-('Annual Tech Summit',        'Full-day summit on emerging tech trends.',        1, 1,  '2026-09-10 09:00', '2026-09-10 17:00', 'scheduled'),
-('Product Launch: Nova',      'Launch event for the new Nova product line.',     7, 3,  '2026-09-15 18:00', '2026-09-15 21:00', 'scheduled'),
-('Board Strategy Meeting',    'Quarterly strategy review with the board.',       8, 2,  '2026-08-05 10:00', '2026-08-05 13:00', 'completed'),
-('Community Volunteer Fair',  'Fair connecting volunteers with local nonprofits.',9, 7, '2026-08-20 11:00', '2026-08-20 16:00', 'scheduled'),
-('Data Science Workshop',     'Hands-on workshop covering ML fundamentals.',     6, 1,  '2026-08-12 13:00', '2026-08-12 17:00', 'scheduled'),
-('Investor Roundtable',       'Closed-door roundtable with key investors.',      3, 2,  '2026-08-01 09:00', '2026-08-01 11:00', 'completed'),
-('Sales Kickoff 2026',        'Annual sales team kickoff and training.',         2, 1,  '2026-09-25 08:30', '2026-09-25 16:00', 'scheduled'),
-('Charity Gala Dinner',       'Black-tie fundraising dinner for local charities.',1, 5,  '2026-10-02 18:30', '2026-10-02 23:00', 'scheduled'),
-('IT Infrastructure Briefing','Internal briefing on new IT systems rollout.',    4, 6,  '2026-08-28 14:00', '2026-08-28 15:30', 'scheduled'),
-('Media & Press Day',         'Press event with hands-on product demos.',        10,3,  '2026-07-15 10:00', '2026-07-15 14:00', 'cancelled');
+-- =========================================================================
+-- VolunteerApplication
+-- =========================================================================
+INSERT INTO VolunteerApplication (VolunteerApplicationID, MemberID, EventID, ApplicationDateTime, ApplicationStatus) VALUES
+(1,  1,  4,    '2026-07-01 09:00:00', 'Approved'),
+(2,  2,  4,    '2026-07-02 10:30:00', 'Approved'),
+(3,  3,  1,    '2026-07-05 08:45:00', 'Pending'),
+(4,  4,  1,    '2026-07-06 11:00:00', 'Rejected'),
+(5,  5,  8,    '2026-07-10 14:00:00', 'Approved'),
+(6,  6,  8,    '2026-07-11 15:30:00', 'Withdrawn'),
+(7,  7,  5,    '2026-07-12 09:15:00', 'Approved'),
+(8,  8,  7,    '2026-07-14 10:00:00', 'Approved'),
+(9,  9,  2,    '2026-07-15 13:20:00', 'Pending'),
+(10, 10, NULL, '2026-07-16 16:00:00', 'Approved');
 
-
-INSERT INTO audience (first_name, last_name, email, phone) VALUES
-('Emma',    'Watson',    'emma.watson@example.com',    '555-0201'),
-('Liam',    'Chen',      'liam.chen@example.com',      '555-0202'),
-('Olivia',  'Rossi',     'olivia.rossi@example.com',   '555-0203'),
-('Noah',    'Patel',     'noah.patel@example.com',     '555-0204'),
-('Ava',     'Kowalski',  'ava.kowalski@example.com',   '555-0205'),
-('Ethan',   'Okafor',    'ethan.okafor@example.com',   '555-0206'),
-('Sophia',  'Martinez',  'sophia.martinez@example.com','555-0207'),
-('Mason',   'Dubois',    'mason.dubois@example.com',   '555-0208'),
-('Isabella','Fischer',   'isabella.fischer@example.com','555-0209'),
-('James',   'Novak',     'james.novak@example.com',    '555-0210');
- 
-
- INSERT INTO volunteer (first_name, last_name, email, phone, event_id, role) VALUES
-('Grace',   'Lee',       'grace.lee@volunteers.org',      '555-0301', 4, 'Check-in Desk'),
-('Lucas',   'Silva',     'lucas.silva@volunteers.org',    '555-0302', 4, 'Booth Setup'),
-('Chloe',   'Anderson',  'chloe.anderson@volunteers.org', '555-0303', 1, 'Registration Desk'),
-('Henry',   'Kimura',    'henry.kimura@volunteers.org',   '555-0304', 1, 'AV Support'),
-('Zoe',     'Ibrahim',   'zoe.ibrahim@volunteers.org',    '555-0305', 8, 'Guest Escort'),
-('Daniel',  'Costa',     'daniel.costa@volunteers.org',   '555-0306', 8, 'Coat Check'),
-('Amara',   'Diallo',    'amara.diallo@volunteers.org',   '555-0307', 5, 'Workshop Assistant'),
-('Ryan',    'Murphy',    'ryan.murphy@volunteers.org',    '555-0308', 7, 'Room Monitor'),
-('Nina',    'Petrova',   'nina.petrova@volunteers.org',   '555-0309', 2, 'Merch Table'),
-('Leo',     'Tanaka',    'leo.tanaka@volunteers.org',     '555-0310', NULL, 'General / Unassigned');
- 
-
- INSERT INTO registration (event_id, audience_id, status) VALUES
-(1, 1,  'confirmed'),
-(1, 2,  'confirmed'),
-(1, 3,  'waitlisted'),
-(2, 4,  'confirmed'),
-(2, 5,  'confirmed'),
-(4, 6,  'confirmed'),
-(4, 7,  'attended'),
-(5, 8,  'confirmed'),
-(7, 9,  'confirmed'),
-(7, 10, 'cancelled'),
-(8, 1,  'confirmed'),
-(9, 2,  'confirmed');
- 
-
- INSERT INTO help_request (event_id, audience_id, assigned_to, subject, description, status, resolved_at) VALUES
-(1, 1,  6, 'Wifi not connecting',            'Attendee unable to join event wifi network.',        'resolved',     '2026-09-10 09:45'),
-(1, 3,  NULL, 'Wheelchair access question',  'Asking about accessible seating in Auditorium A.',   'open',         NULL),
-(2, 4,  3, 'Missing swag bag',                'Registered but did not receive product swag.',       'resolved',     '2026-09-15 19:10'),
-(4, 6,  7, 'Volunteer shift confusion',       'Volunteer unsure of assigned shift time.',            'closed',       '2026-08-20 12:00'),
-(4, 7,  NULL, 'Booth location question',      'Nonprofit asking where their booth is located.',     'in_progress',  NULL),
-(5, 8,  1, 'Workshop materials not printed',  'Handouts for workshop were not available on-site.',  'resolved',     '2026-08-12 13:30'),
-(7, 9,  1, 'Badge printer malfunction',       'Badge printer jammed at registration desk.',          'in_progress',  NULL),
-(8, 1,  5, 'Dietary restriction not logged',  'Guest has a nut allergy not reflected in catering.',  'open',         NULL),
-(9, 2,  6, 'Projector not working',           'Presenter cannot connect laptop to room projector.',  'resolved',     '2026-08-28 14:15'),
-(NULL, 5, 2, 'General billing question',      'Question about an invoice unrelated to a specific event.', 'open',    NULL);
- 
-
- 
+-- =========================================================================
+-- HelpRequest
+-- =========================================================================
+INSERT INTO HelpRequest (HelpRequestID, MemberID, StaffID, RequestDateTime, QuestionText, RequestStatus, ResolvedDateTime) VALUES
+(1,  1, 6,    '2026-09-10 09:45:00', 'Wifi not connecting during the event.',                'Resolved',   '2026-09-10 10:15:00'),
+(2,  3, NULL, '2026-08-20 11:30:00', 'Wheelchair access question for Auditorium A.',         'Pending',    NULL),
+(3,  4, 3,    '2026-09-15 19:00:00', 'Missing swag bag from the product launch.',            'Resolved',   '2026-09-15 19:30:00'),
+(4,  6, 7,    '2026-08-20 12:00:00', 'Confusion about assigned volunteer shift time.',       'Resolved',   '2026-08-20 12:20:00'),
+(5,  7, NULL, '2026-08-20 13:00:00', 'Question about booth location for our nonprofit.',     'InProgress', NULL),
+(6,  8, 1,    '2026-08-12 13:15:00', 'Workshop handouts were not printed on-site.',          'Resolved',   '2026-08-12 13:45:00'),
+(7,  9, 1,    '2026-09-25 09:00:00', 'Badge printer jammed at the registration desk.',       'InProgress', NULL),
+(8,  1, 5,    '2026-10-02 19:00:00', 'Dietary restriction was not reflected in catering.',   'Pending',    NULL),
+(9,  2, 6,    '2026-08-28 14:15:00', 'Projector will not connect to presenter laptop.',      'Resolved',   '2026-08-28 14:30:00'),
+(10, 5, 8,    '2026-07-20 10:00:00', 'General billing question about an invoice.',           'Pending',    NULL);
