@@ -1,96 +1,123 @@
 """Tushar's four event and service application features."""
 
-import os
-import psycopg2
-import psycopg2.extras
-from database import *
- 
+import sqlite3
+from datetime import datetime
+
+from database import get_connection
+
 
 def find_event(query: str):
     """Find matching library events."""
-    sql = """
-        SELECT event_id, name, description, room_id, organizer_id,
-               start_time, end_time, status
-        FROM event
-        WHERE name ILIKE %(pattern)s
-           OR description ILIKE %(pattern)s
-        ORDER BY start_time ASC
-    """
+    pattern = f"%{query}%"
     with get_connection() as conn:
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(sql, {"pattern": f"%{query}%"})
-            return [dict(row) for row in cur.fetchall()]
- 
- 
+        rows = conn.execute(
+            """
+            SELECT EventID, EventTitle, EventCategory, Description,
+                   TargetAudience, StartDateTime, EndDateTime, EventStatus,
+                   RegistrationLimit, RoomID, OrganizerStaffID
+            FROM Event
+            WHERE EventTitle LIKE ? COLLATE NOCASE
+               OR Description LIKE ? COLLATE NOCASE
+            ORDER BY StartDateTime ASC
+            """,
+            (pattern, pattern),
+        ).fetchall()
+        return [dict(row) for row in rows]
+
 
 def register_for_event(member_id: int, event_id: int):
-     """Register a member for an event."""
-     sql = """
-        INSERT INTO registration (event_id, audience_id, status)
-        VALUES (%(event_id)s, %(member_id)s, 'confirmed')
-        ON CONFLICT (event_id, audience_id) DO NOTHING
-        RETURNING registration_id, event_id, audience_id, status, registered_at
-    """
-     with get_connection() as conn:
-         with conn.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-             cur.execute(sql, {"member_id":member_id,"event_id":event_id})
-             row = cur.fetchone()
-             if row is None:
-                 raise ValueError(
-                     f"Member {member_id} is already registered for event {event_id}"
-                 )
-             return dict(row)
+    """Register a member for an event."""
+    with get_connection() as conn:
+        existing = conn.execute(
+            "SELECT 1 FROM Registration WHERE MemberID = ? AND EventID = ?",
+            (member_id, event_id),
+        ).fetchone()
+        if existing is not None:
+            raise ValueError(
+                f"Member {member_id} is already registered for event {event_id}"
+            )
 
-
-def volunteer(member_id: int, event_id: int):
-    """Record a member's request to volunteer for an event."""
-    lookup_sql = """
-        SELECT first_name, last_name, email, phone
-        FROM audience
-        WHERE audience_id = %(member_id)s
-    """
-    insert_sql = """
-        INSERT INTO volunteer
-            (first_name, last_name, email, phone, event_id, audience_id)
-        VALUES (%(first_name)s, %(last_name)s, %(email)s, %(phone)s,
-                %(event_id)s, %(member_id)s)
-        RETURNING volunteer_id, event_id, audience_id, role, created_at
-    """
-    with get_connection as conn:
-        with conn.cursor(cursor_factory= psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(lookup_sql,{"member_id":member_id})
-            member = cur.fetchone()
-            if member is None:
-                raise ValueError(
-                    f"No audience member found with id {member_id}."
-                )
-            cur.execute(insert_sql,{
-                "first_name": member["first_name"],
-                "last_name": member["last_name"],
-                "email": member["email"],
-                "phone": member["phone"],
-                "event_id": event_id,
-                "member_id": member_id,
-            })
-            row = cur.fetchone()
+        registered_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            conn.execute(
+                """
+                INSERT INTO Registration
+                    (MemberID, EventID, RegistrationDateTime, RegistrationStatus)
+                VALUES (?, ?, ?, 'Registered')
+                """,
+                (member_id, event_id, registered_at),
+            )
             conn.commit()
-            return dict(row)
+        except sqlite3.IntegrityError as exc:
+            raise ValueError(str(exc)) from exc
+
+        return {
+            "MemberID": member_id,
+            "EventID": event_id,
+            "RegistrationDateTime": registered_at,
+            "RegistrationStatus": "Registered",
+        }
+
+
+def volunteer(member_id: int, event_id: int = None):
+    """Record a member's request to volunteer, optionally for a specific event."""
+    with get_connection() as conn:
+        member = conn.execute(
+            "SELECT MemberID FROM Member WHERE MemberID = ?", (member_id,)
+        ).fetchone()
+        if member is None:
+            raise ValueError(f"No member found with id {member_id}.")
+
+        applied_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            cursor = conn.execute(
+                """
+                INSERT INTO VolunteerApplication
+                    (MemberID, EventID, ApplicationDateTime, ApplicationStatus)
+                VALUES (?, ?, ?, 'Pending')
+                """,
+                (member_id, event_id, applied_at),
+            )
+            conn.commit()
+        except sqlite3.IntegrityError as exc:
+            raise ValueError(str(exc)) from exc
+
+        return {
+            "VolunteerApplicationID": cursor.lastrowid,
+            "MemberID": member_id,
+            "EventID": event_id,
+            "ApplicationDateTime": applied_at,
+            "ApplicationStatus": "Pending",
+        }
+
 
 def ask_librarian(member_id: int, question: str):
     """Submit a member's help request to a librarian."""
-    sql = """
-        INSERT INTO help_request (audience_id, subject, description, status)
-        VALUES (%(member_id)s, %(subject)s, %(question)s, 'open')
-        RETURNING help_request_id, audience_id, subject, status, created_at
-    """
-    subject = question if len(question) <= 200 else question[:197] + '...'
     with get_connection() as conn:
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(sql,{
-                "member_id": member_id,
-                "subject": subject,
-                "question": question,
-            })
-            row = cur.fetchone()
-            conn.commit()
-            return dict(row)
+        member = conn.execute(
+            "SELECT MemberID FROM Member WHERE MemberID = ?", (member_id,)
+        ).fetchone()
+        if member is None:
+            raise ValueError(f"No member found with id {member_id}.")
+
+        requested_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor = conn.execute(
+            """
+            INSERT INTO HelpRequest
+                (MemberID, StaffID, RequestDateTime, QuestionText,
+                 RequestStatus, ResolvedDateTime)
+            VALUES (?, NULL, ?, ?, 'Pending', NULL)
+            """,
+            (member_id, requested_at, question),
+        )
+        conn.commit()
+
+        return {
+            "HelpRequestID": cursor.lastrowid,
+            "MemberID": member_id,
+            "StaffID": None,
+            "RequestDateTime": requested_at,
+            "QuestionText": question,
+            "RequestStatus": "Pending",
+            "ResolvedDateTime": None,
+        }
