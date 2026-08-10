@@ -1,4 +1,4 @@
-"""Tests for Tushar's four event and service features."""
+"""Tests for the event and service features."""
 
 import pytest
 from unittest.mock import MagicMock, patch
@@ -69,7 +69,6 @@ def test_find_event_no_matches_return_empty_list(mock_get_conn):
 @patch("app.event_features.get_connection")
 def test_register_for_event_success(mock_get_conn):
     """Test successful event registration."""
-    # Mock that no existing registration exists
     none_row = None
     conn, cursor = make_mock_conn()
     cursor.fetchone.return_value = none_row

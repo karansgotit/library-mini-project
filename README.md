@@ -69,16 +69,16 @@ the file merged. The reviewer checks the work but does not replace the owner.
 - [ ] Step 1 is included in `mp.pdf`
 - [ ] Step 2 E/R diagram is readable in `mp.pdf`
 - [ ] Step 3 BCNF analysis is included in `mp.pdf`
-- [ ] Every database table contains at least 10 realistic rows
-- [ ] `library.db` opens successfully
-- [ ] All eight application features work correctly
-- [ ] Database integrity and application tests pass
-- [ ] All required application files are included
-- [ ] Application setup and running instructions are included
+- [x] Every database table contains at least 10 realistic rows
+- [x] `library.db` opens successfully
+- [x] All eight application features work correctly
+- [x] Database integrity and application tests pass
+- [x] All required application files are included
+- [x] Application setup and running instructions are included
 - [ ] The final ZIP opens and contains every required file
 - [ ] The ZIP is submitted to the correct Canvas activity
 
-## Planned commands
+## Commands
 
 Build the development database:
 
@@ -98,5 +98,5 @@ Run the tests:
 python3 -m pytest
 ```
 
-The repository currently contains starter placeholders. Features, tables,
-sample data, documentation, and tests will be completed during development.
+The database schema, sample data, application, and tests are complete. The
+written report and final ZIP are prepared separately for submission.

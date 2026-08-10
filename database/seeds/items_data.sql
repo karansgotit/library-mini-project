@@ -1,6 +1,4 @@
--- Realistic library seed data for the reduced project design.
 
--- Item
 INSERT INTO Item (ItemID, Title, CreatorName, CollectionStatus) VALUES
 (1, 'The Handmaid''s Tale', 'Margaret Atwood', 'InCollection'),
 (2, '1984', 'George Orwell', 'InCollection'),
@@ -53,7 +51,6 @@ INSERT INTO Item (ItemID, Title, CreatorName, CollectionStatus) VALUES
 (49, 'Five Little Indians', 'Michelle Good', 'InCollection'),
 (50, 'The In-Between World of Vikram Lall', 'M.G. Vassanji', 'InCollection');
 
--- PrintBook
 INSERT INTO PrintBook (ItemID, ISBN) VALUES
 (1, '9780771008795'),
 (2, '9780451524935'),
@@ -66,7 +63,6 @@ INSERT INTO PrintBook (ItemID, ISBN) VALUES
 (9, '9781594631931'),
 (10, '9781770864869');
 
--- Magazine
 INSERT INTO Magazine (ItemID, ISSN, VolumeNumber, IssueNumber) VALUES
 (11, '0027-9358', 251, 3),
 (12, '0028-792X', 102, 24),
@@ -79,7 +75,6 @@ INSERT INTO Magazine (ItemID, ISSN, VolumeNumber, IssueNumber) VALUES
 (19, '1072-7825', 333, 1),
 (20, '0161-7370', 297, 7);
 
--- Journal
 INSERT INTO Journal (ItemID, ISSN, Volume, Issue) VALUES
 (21, '0028-0836', 632, 8024),
 (22, '0036-8075', 385, 6712),
@@ -92,7 +87,6 @@ INSERT INTO Journal (ItemID, ISSN, Volume, Issue) VALUES
 (29, '0096-1442', 50, 5),
 (30, '0024-2519', 94, 1);
 
--- Record
 INSERT INTO Record (ItemID, LabelName, RecordNumber) VALUES
 (31, 'Reprise Records', 'MS-2038'),
 (32, 'Apple Records', 'SO-383'),
@@ -105,7 +99,6 @@ INSERT INTO Record (ItemID, LabelName, RecordNumber) VALUES
 (39, 'Parlophone', 'NODATA-02'),
 (40, 'XL Recordings', 'XLLP-324');
 
--- OnlineBook
 INSERT INTO OnlineBook (ItemID, ISBN, AccessURL) VALUES
 (41, '9780441478125', 'https://ebooks.example.org/items/41'),
 (42, '9780385353304', 'https://ebooks.example.org/items/42'),
@@ -118,7 +111,6 @@ INSERT INTO OnlineBook (ItemID, ISBN, AccessURL) VALUES
 (49, '9781443459181', 'https://ebooks.example.org/items/49'),
 (50, '9780385660654', 'https://ebooks.example.org/items/50');
 
--- Copy
 INSERT INTO Copy (ItemID, CopyNumber, Condition) VALUES
 (1, 1, 'Usable'),
 (2, 1, 'Usable'),
@@ -141,7 +133,6 @@ INSERT INTO Copy (ItemID, CopyNumber, Condition) VALUES
 (19, 1, 'Retired'),
 (20, 1, 'Usable');
 
--- Loan
 INSERT INTO Loan (LoanID, MemberID, ItemID, CopyNumber, BorrowDate, DueDate, ReturnDate) VALUES
 (1, 1, 1, 1, '2026-01-05', '2026-01-26', '2026-01-24'),
 (2, 2, 2, 1, '2026-01-12', '2026-02-02', '2026-02-06'),
@@ -154,7 +145,6 @@ INSERT INTO Loan (LoanID, MemberID, ItemID, CopyNumber, BorrowDate, DueDate, Ret
 (9, 1, 9, 1, '2026-07-25', '2026-08-15', NULL),
 (10, 2, 10, 1, '2026-08-01', '2026-08-22', NULL);
 
--- Fine
 INSERT INTO Fine (LoanID, FineNumber, FineType, AmountCents, AssessedDate, Status, ResolvedDate) VALUES
 (1, 1, 'Damage', 1200, '2026-01-24', 'Paid', '2026-01-30'),
 (2, 1, 'Overdue', 400, '2026-02-06', 'Paid', '2026-02-06'),
@@ -167,7 +157,6 @@ INSERT INTO Fine (LoanID, FineNumber, FineType, AmountCents, AssessedDate, Statu
 (9, 1, 'Damage', 900, '2026-08-02', 'Unpaid', NULL),
 (10, 1, 'Overdue', 200, '2026-08-23', 'Unpaid', NULL);
 
--- DonationOffer
 INSERT INTO DonationOffer (DonationOfferID, MemberID, OfferDateTime, OfferDescription, OfferStatus, ProducedItemID, ProducedCopyNumber) VALUES
 (1, 1, '2026-01-08 10:15:00', 'Two recent Canadian novels in good condition', 'Pending', NULL, NULL),
 (2, 2, '2026-01-20 14:30:00', 'Box of children''s picture books', 'Rejected', NULL, NULL),

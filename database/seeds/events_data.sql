@@ -1,6 +1,4 @@
--- Realistic library seed data for the reduced project design.
 
--- Room
 INSERT INTO Room (RoomID, RoomNumber, Capacity) VALUES
 (1, 'CED-100', 80),
 (2, 'CED-110', 30),
@@ -13,7 +11,6 @@ INSERT INTO Room (RoomID, RoomNumber, Capacity) VALUES
 (9, 'CED-220', 35),
 (10, 'CED-230', 10);
 
--- Event
 INSERT INTO Event (EventID, EventTitle, EventCategory, Description, TargetAudience, StartDateTime, EndDateTime, EventStatus, RegistrationLimit, CancellationReason, RoomID, OrganizerStaffID) VALUES
 (1, 'Evening Book Club', 'BookClub', 'Discussion of a contemporary Canadian novel.', 'Adults', '2026-09-03 18:00:00', '2026-09-03 20:00:00', 'Scheduled', 20, NULL, 1, 1),
 (2, 'Preschool Story Time', 'StoryTime', 'Stories, songs, and simple crafts for young children.', 'Children ages 3 to 5 and caregivers', '2026-09-05 10:00:00', '2026-09-05 11:00:00', 'Scheduled', 25, NULL, 2, 5),
@@ -26,7 +23,6 @@ INSERT INTO Event (EventID, EventTitle, EventCategory, Description, TargetAudien
 (9, 'Research Skills for Students', 'Workshop', 'Using catalogues and databases for school research.', 'Secondary and post-secondary students', '2026-09-27 13:00:00', '2026-09-27 15:00:00', 'Scheduled', 30, NULL, 9, 9),
 (10, 'Outdoor Poetry Reading', 'AuthorTalk', 'Community poetry reading in the library courtyard.', 'General public', '2026-08-30 17:00:00', '2026-08-30 19:00:00', 'Cancelled', 10, 'Cancelled because of poor weather', 10, 3);
 
--- Registration
 INSERT INTO Registration (MemberID, EventID, RegistrationDateTime, RegistrationStatus) VALUES
 (1, 1, '2026-08-01 10:15:00', 'Registered'),
 (1, 8, '2026-08-12 10:05:00', 'Registered'),
@@ -39,7 +35,6 @@ INSERT INTO Registration (MemberID, EventID, RegistrationDateTime, RegistrationS
 (7, 5, '2026-08-08 08:55:00', 'Registered'),
 (9, 7, '2026-08-10 15:30:00', 'Registered');
 
--- VolunteerApplication
 INSERT INTO VolunteerApplication (VolunteerApplicationID, MemberID, EventID, ApplicationDateTime, ApplicationStatus) VALUES
 (1, 1, 1, '2026-08-02 09:00:00', 'Approved'),
 (2, 2, 2, '2026-08-04 10:30:00', 'Pending'),
@@ -52,7 +47,6 @@ INSERT INTO VolunteerApplication (VolunteerApplicationID, MemberID, EventID, App
 (9, 9, 9, '2026-08-15 15:55:00', 'Approved'),
 (10, 10, NULL, '2026-08-16 10:20:00', 'Pending');
 
--- HelpRequest
 INSERT INTO HelpRequest (HelpRequestID, MemberID, StaffID, RequestDateTime, QuestionText, RequestStatus, ResolvedDateTime) VALUES
 (1, 1, 1, '2026-06-01 09:15:00', 'How can I renew a book online?', 'Resolved', '2026-06-01 09:30:00'),
 (2, 2, 4, '2026-06-04 13:40:00', 'Where can I find books about local history?', 'Resolved', '2026-06-04 14:05:00'),

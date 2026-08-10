@@ -1,4 +1,4 @@
-"""Tushar's four event and service application features."""
+"""Event and service features for the library application."""
 
 import sqlite3
 from datetime import datetime

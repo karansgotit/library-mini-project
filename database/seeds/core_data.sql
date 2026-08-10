@@ -1,6 +1,4 @@
--- Realistic library seed data for the reduced project design.
 
--- Member
 INSERT INTO Member (MemberID, FullName, Email, Phone, MembershipStatus) VALUES
 (1, 'Aisha Khan', 'aisha.khan@example.com', '604-555-0101', 'Active'),
 (2, 'Ben Carter', 'ben.carter@example.com', '604-555-0102', 'Active'),
@@ -13,7 +11,6 @@ INSERT INTO Member (MemberID, FullName, Email, Phone, MembershipStatus) VALUES
 (9, 'Isaac Brown', 'isaac.brown@example.com', '604-555-0109', 'Active'),
 (10, 'Julia Singh', 'julia.singh@example.com', NULL, 'Expired');
 
--- Staff
 INSERT INTO Staff (StaffID, FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) VALUES
 (1, 'Alice Park', 'Librarian', 'alice.park@library.ca', 'Active', '2019-02-11', 'Circulation'),
 (2, 'Marcus Lee', 'Branch Manager', 'marcus.lee@library.ca', 'Active', '2016-06-20', 'Administration'),

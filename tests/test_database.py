@@ -64,14 +64,12 @@ class TestDatabaseSchema:
             assert columns[col_name]['pk'] == col_info['pk']
 
     def test_member_not_null_constraint(self, conn):
-        # full name cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
                 "VALUES (NULL, 'test_notnull@example.com', '123-456-7890', 'Active')"
             )
 
-        # membership status cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
@@ -81,7 +79,6 @@ class TestDatabaseSchema:
     def test_member_check_constraints(self, conn):
         valid_statuses = ['Active', 'Suspended', 'Expired']
 
-        # test valid membership statuses - use unique emails
         for i, status in enumerate(valid_statuses):
             conn.execute(
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
@@ -89,7 +86,6 @@ class TestDatabaseSchema:
                 (f'User {status}', f'check_{i}_{status.lower()}@example.com', '123-456-7890', status)
             )
 
-        # test invalid membership status
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
@@ -97,20 +93,17 @@ class TestDatabaseSchema:
             )
 
     def test_member_unique_constraints(self, conn):
-        # insert first member with email - use unique email
         conn.execute(
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
             "VALUES ('First User', 'unique_test@example.com', '123-456-7890', 'Active')"
         )
 
-        # insert second member with same email (should fail)
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
                 "VALUES ('Second User', 'unique_test@example.com', '987-654-3210', 'Active')"
             )
 
-        # checking if null email values are allowed
         conn.execute(
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
             "VALUES ('User One', NULL, '111-111-1111', 'Active')"
@@ -135,42 +128,36 @@ class TestDatabaseSchema:
         assert second_id > first_id
 
     def test_staff_not_null_constraints(self, conn):
-        # fullname cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES (NULL, 'Librarian', 'staff_notnull@example.com', 'Active', '2024-01-01', 'Library')"
             )
 
-        # job title cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', NULL, 'staff_notnull2@example.com', 'Active', '2024-01-01', 'Library')"
             )
 
-        # Email cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', NULL, 'Active', '2024-01-01', 'Library')"
             )
 
-        # Employment status cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', 'staff_notnull3@example.com', NULL, '2024-01-01', 'Library')"
             )
 
-        # HireDate cant be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', 'staff_notnull4@example.com', 'Active', NULL, 'Library')"
             )
 
-        # DepartmentName cannot be null
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
@@ -178,7 +165,6 @@ class TestDatabaseSchema:
             )
 
     def test_staff_check_constraints(self, conn):
-        # checking valid employment status - use unique emails
         valid_statuses = ['Active', 'OnLeave', 'Former']
         for i, status in enumerate(valid_statuses):
             conn.execute(
@@ -187,7 +173,6 @@ class TestDatabaseSchema:
                 (f'Staff {status}', 'Librarian', f'check_staff_{i}_{status.lower()}@example.com', status, '2024-01-01', 'Library')
             )
 
-        # testing for invalid employment status
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
@@ -195,13 +180,11 @@ class TestDatabaseSchema:
             )
 
     def test_staff_unique_constraints(self, conn):
-        # inserting staff member 1 with email
         conn.execute(
             "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
             "VALUES ('First Staff', 'Librarian', 'staff_unique_test@example.com', 'Active', '2024-01-01', 'Library')"
         )
 
-        # inserting staff member 2 with same email (should fail)
         with pytest.raises(sqlite3.IntegrityError):
             conn.execute(
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
@@ -229,7 +212,6 @@ class TestDatabaseSchema:
             "VALUES ('John Doe', 'john_valid@example.com', '555-123-4567', 'Active')"
         )
         
-        # Verify the data was inserted
         result = conn.execute(
             "SELECT FullName, Email, Phone, MembershipStatus FROM Member WHERE Email = 'john_valid@example.com'"
         ).fetchone()
@@ -246,7 +228,6 @@ class TestDatabaseSchema:
             "VALUES ('Jane Smith', 'Head Librarian', 'jane_valid@example.com', 'Active', '2020-06-15', 'Library Services')"
         )
         
-        # Verify the data was inserted
         result = conn.execute(
             "SELECT FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName "
             "FROM Staff WHERE Email = 'jane_valid@example.com'"

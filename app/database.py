@@ -1,4 +1,4 @@
-"""Karan-owned SQLite connection utilities for the library application."""
+"""Database connection helpers for the library application."""
 
 from pathlib import Path
 import sqlite3
@@ -12,6 +12,7 @@ def find_database() -> Path:
     """Locate the packaged database or the development build."""
     possible_paths = [
         APP_DIRECTORY / "library.db",
+        PROJECT_ROOT / "library.db",
         PROJECT_ROOT / "build" / "library.db",
     ]
 

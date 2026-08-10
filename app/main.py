@@ -1,4 +1,4 @@
-"""Karan-owned terminal menu integrating all eight application features."""
+"""Terminal menu for the library application."""
 
 import sqlite3
 

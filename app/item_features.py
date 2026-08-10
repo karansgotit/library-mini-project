@@ -1,4 +1,4 @@
-"""Karan's four item-related application features."""
+"""Item features for the library application."""
 
 import sqlite3
 from datetime import date, datetime, timedelta

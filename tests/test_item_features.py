@@ -1,4 +1,4 @@
-"""Tests for Karan's four item-related features."""
+"""Tests for the four item features."""
 
 from datetime import date, datetime
 from unittest.mock import MagicMock, patch
@@ -23,14 +23,13 @@ def make_mock_conn(fetchone_result=None, fetchall_result=None):
     conn = MagicMock()
     conn.__enter__.return_value = conn
     conn.__exit__.return_value = False
-    # Make conn.execute return the cursor
     conn.execute.return_value = cursor
     
     return conn, cursor
 
 
 class TestItemFeatures:
-    """Test Karan's four item-related features."""
+    """Test the four item features."""
 
     @patch("app.item_features.get_connection")
     def test_find_item_returns_matching_items(self, mock_get_connection):
@@ -90,7 +89,6 @@ class TestItemFeatures:
     @patch("app.item_features.get_connection")
     def test_borrow_item_success(self, mock_get_connection):
         """Test successful borrowing of an available item."""
-        # Mock that a copy is available
         copy_row = {"CopyNumber": 1}
         
         conn, cursor = make_mock_conn()
@@ -127,7 +125,6 @@ class TestItemFeatures:
 
         result = borrow_item(member_id=1, item_id=1)
 
-        # Verify due date is LOAN_PERIOD_DAYS after borrow date
         borrow_date = datetime.strptime(result["BorrowDate"], "%Y-%m-%d")
         due_date = datetime.strptime(result["DueDate"], "%Y-%m-%d")
         days_diff = (due_date - borrow_date).days
@@ -136,7 +133,6 @@ class TestItemFeatures:
     @patch("app.item_features.get_connection")
     def test_return_item_success(self, mock_get_connection):
         """Test successful return of a borrowed item."""
-        # Mock that loan exists and is active
         loan_before = {"LoanID": 1, "ReturnDate": None}
         loan_after = {
             "LoanID": 1,
