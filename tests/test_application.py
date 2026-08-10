@@ -1,12 +1,19 @@
-"""Karan-owned end-to-end tests for the complete library application."""
+"""Basic checks for the application menu and its eight features."""
 
-import pytest
-
-import pytest
-from app.main import *
-from app.database import *
-from app.item_features import *
-from app.event_features import *
+from app.main import MENU_OPTIONS
+from app.item_features import (
+    LOAN_PERIOD_DAYS,
+    borrow_item,
+    donate_item,
+    find_item,
+    return_item,
+)
+from app.event_features import (
+    ask_librarian,
+    find_event,
+    register_for_event,
+    volunteer,
+)
 
 
 def test_menu_options():
@@ -24,7 +31,8 @@ def test_menu_options():
 def test_loan_period_constant():
     assert LOAN_PERIOD_DAYS == 14
 
-def test_features_func():
+
+def test_feature_functions_are_available():
     assert callable(find_item)
     assert callable(borrow_item)
     assert callable(return_item)
@@ -32,4 +40,4 @@ def test_features_func():
     assert callable(find_event)
     assert callable(register_for_event)
     assert callable(volunteer)
-    assert callable(ask_librarian) 
+    assert callable(ask_librarian)

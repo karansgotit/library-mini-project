@@ -45,16 +45,14 @@ def test_find_event_returns_matching_event(mock_get_connection):
             "OrganizerStaffID": 1
         },
     ]
-    conn, cursor = make_mock_conn(fetchall_result=rows)
+    conn, _ = make_mock_conn(fetchall_result=rows)
     mock_get_connection.return_value = conn
 
     result = find_event("workshop")
 
     assert result == rows
-    # Change this line:
-    conn.execute.assert_called_once()  # Not cursor.execute
-    # And update the params check:
-    sql, params = conn.execute.call_args[0]
+    conn.execute.assert_called_once()
+    _, params = conn.execute.call_args[0]
     assert params[0] == "%workshop%"
     assert params[1] == "%workshop%"
 
@@ -73,16 +71,8 @@ def test_register_for_event_success(mock_get_conn):
     """Test successful event registration."""
     # Mock that no existing registration exists
     none_row = None
-    # Mock the inserted registration
-    row = {
-        "MemberID": 2,
-        "EventID": 1,
-        "RegistrationDateTime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "RegistrationStatus": "Registered"
-    }
-    
     conn, cursor = make_mock_conn()
-    cursor.fetchone.side_effect = [none_row, row]
+    cursor.fetchone.return_value = none_row
     mock_get_conn.return_value = conn
 
     result = register_for_event(member_id=2, event_id=1)

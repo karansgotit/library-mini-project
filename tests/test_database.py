@@ -1,18 +1,22 @@
-"""End-to-end tests for the core database schema (Member and Staff tables)."""
+"""Database schema tests that leave the database unchanged."""
+
+import sqlite3
 
 import pytest
-import sqlite3
+
 from app.database import get_connection, find_database
 
 
-class TestCoreSchema:
-    """Test the core database schema (Member and Staff tables)."""
+class TestDatabaseSchema:
+    """Test table creation and the Member and Staff constraints."""
 
     @pytest.fixture
     def conn(self):
         """Provide a database connection for testing."""
         conn = get_connection()
+        conn.execute("BEGIN TRANSACTION")
         yield conn
+        conn.rollback()
         conn.close()
 
     def test_database_file_exists(self):
@@ -26,13 +30,18 @@ class TestCoreSchema:
         result = conn.execute("PRAGMA foreign_keys").fetchone()
         assert result[0] == 1, "Foreign key constraints are not enabled"
 
-    def test_core_tables_exist(self, conn):
+    def test_all_tables_exist(self, conn):
         tables = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table'"
         ).fetchall()
         table_names = [row['name'] for row in tables]
 
-        expected_tables = ['Member', 'Staff']
+        expected_tables = [
+            'Member', 'Staff', 'Item', 'PrintBook', 'Magazine', 'Journal',
+            'Record', 'OnlineBook', 'Copy', 'Loan', 'Fine', 'DonationOffer',
+            'Room', 'Event', 'Registration', 'VolunteerApplication',
+            'HelpRequest'
+        ]
         for table in expected_tables:
             assert table in table_names, f"Table '{table}' not found in database"
 
@@ -61,7 +70,6 @@ class TestCoreSchema:
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
                 "VALUES (NULL, 'test_notnull@example.com', '123-456-7890', 'Active')"
             )
-            conn.commit()
 
         # membership status cant be null
         with pytest.raises(sqlite3.IntegrityError):
@@ -69,7 +77,6 @@ class TestCoreSchema:
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
                 "VALUES ('Test User', 'test_notnull2@example.com', '123-456-7890', NULL)"
             )
-            conn.commit()
 
     def test_member_check_constraints(self, conn):
         valid_statuses = ['Active', 'Suspended', 'Expired']
@@ -81,7 +88,6 @@ class TestCoreSchema:
                 "VALUES (?, ?, ?, ?)",
                 (f'User {status}', f'check_{i}_{status.lower()}@example.com', '123-456-7890', status)
             )
-            conn.commit()
 
         # test invalid membership status
         with pytest.raises(sqlite3.IntegrityError):
@@ -89,7 +95,6 @@ class TestCoreSchema:
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
                 "VALUES ('Invalid User', 'invalid_check@example.com', '123-456-7890', 'Invalid')"
             )
-            conn.commit()
 
     def test_member_unique_constraints(self, conn):
         # insert first member with email - use unique email
@@ -97,7 +102,6 @@ class TestCoreSchema:
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
             "VALUES ('First User', 'unique_test@example.com', '123-456-7890', 'Active')"
         )
-        conn.commit()
 
         # insert second member with same email (should fail)
         with pytest.raises(sqlite3.IntegrityError):
@@ -105,7 +109,6 @@ class TestCoreSchema:
                 "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
                 "VALUES ('Second User', 'unique_test@example.com', '987-654-3210', 'Active')"
             )
-            conn.commit()
 
         # checking if null email values are allowed
         conn.execute(
@@ -116,19 +119,18 @@ class TestCoreSchema:
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
             "VALUES ('User Two', NULL, '222-222-2222', 'Active')"
         )
-        conn.commit()
 
     def test_member_primary_key_auto_increment(self, conn):
-        conn.execute(
+        first_id = conn.execute(
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
-            "VALUES ('User A', 'auto_a@example.com', '111-111-1111', 'Active')"
-        )
-        first_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
-        conn.execute(
+            "VALUES ('User A', 'auto_a@example.com', '111-111-1111', 'Active') "
+            "RETURNING MemberID"
+        ).fetchone()[0]
+        second_id = conn.execute(
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
-            "VALUES ('User B', 'auto_b@example.com', '222-222-2222', 'Active')"
-        )
-        second_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            "VALUES ('User B', 'auto_b@example.com', '222-222-2222', 'Active') "
+            "RETURNING MemberID"
+        ).fetchone()[0]
 
         assert second_id > first_id
 
@@ -139,7 +141,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES (NULL, 'Librarian', 'staff_notnull@example.com', 'Active', '2024-01-01', 'Library')"
             )
-            conn.commit()
 
         # job title cant be null
         with pytest.raises(sqlite3.IntegrityError):
@@ -147,7 +148,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', NULL, 'staff_notnull2@example.com', 'Active', '2024-01-01', 'Library')"
             )
-            conn.commit()
 
         # Email cant be null
         with pytest.raises(sqlite3.IntegrityError):
@@ -155,7 +155,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', NULL, 'Active', '2024-01-01', 'Library')"
             )
-            conn.commit()
 
         # Employment status cant be null
         with pytest.raises(sqlite3.IntegrityError):
@@ -163,7 +162,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', 'staff_notnull3@example.com', NULL, '2024-01-01', 'Library')"
             )
-            conn.commit()
 
         # HireDate cant be null
         with pytest.raises(sqlite3.IntegrityError):
@@ -171,7 +169,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', 'staff_notnull4@example.com', 'Active', NULL, 'Library')"
             )
-            conn.commit()
 
         # DepartmentName cannot be null
         with pytest.raises(sqlite3.IntegrityError):
@@ -179,7 +176,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Staff User', 'Librarian', 'staff_notnull5@example.com', 'Active', '2024-01-01', NULL)"
             )
-            conn.commit()
 
     def test_staff_check_constraints(self, conn):
         # checking valid employment status - use unique emails
@@ -190,7 +186,6 @@ class TestCoreSchema:
                 "VALUES (?, ?, ?, ?, ?, ?)",
                 (f'Staff {status}', 'Librarian', f'check_staff_{i}_{status.lower()}@example.com', status, '2024-01-01', 'Library')
             )
-            conn.commit()
 
         # testing for invalid employment status
         with pytest.raises(sqlite3.IntegrityError):
@@ -198,7 +193,6 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Invalid Staff', 'Librarian', 'invalid_staff_check@example.com', 'Invalid', '2024-01-01', 'Library')"
             )
-            conn.commit()
 
     def test_staff_unique_constraints(self, conn):
         # inserting staff member 1 with email
@@ -206,7 +200,6 @@ class TestCoreSchema:
             "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
             "VALUES ('First Staff', 'Librarian', 'staff_unique_test@example.com', 'Active', '2024-01-01', 'Library')"
         )
-        conn.commit()
 
         # inserting staff member 2 with same email (should fail)
         with pytest.raises(sqlite3.IntegrityError):
@@ -214,20 +207,19 @@ class TestCoreSchema:
                 "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
                 "VALUES ('Second Staff', 'Librarian', 'staff_unique_test@example.com', 'Active', '2024-01-01', 'Library')"
             )
-            conn.commit()
 
     def test_staff_primary_key_auto_increment(self, conn):
-        conn.execute(
+        first_id = conn.execute(
             "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
-            "VALUES ('Staff A', 'Librarian', 'staff_auto_a@example.com', 'Active', '2024-01-01', 'Library')"
-        )
-        first_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            "VALUES ('Staff A', 'Librarian', 'staff_auto_a@example.com', 'Active', '2024-01-01', 'Library') "
+            "RETURNING StaffID"
+        ).fetchone()[0]
         
-        conn.execute(
+        second_id = conn.execute(
             "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
-            "VALUES ('Staff B', 'Librarian', 'staff_auto_b@example.com', 'Active', '2024-01-01', 'Library')"
-        )
-        second_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+            "VALUES ('Staff B', 'Librarian', 'staff_auto_b@example.com', 'Active', '2024-01-01', 'Library') "
+            "RETURNING StaffID"
+        ).fetchone()[0]
         
         assert second_id > first_id
 
@@ -236,7 +228,6 @@ class TestCoreSchema:
             "INSERT INTO Member (FullName, Email, Phone, MembershipStatus) "
             "VALUES ('John Doe', 'john_valid@example.com', '555-123-4567', 'Active')"
         )
-        conn.commit()
         
         # Verify the data was inserted
         result = conn.execute(
@@ -254,7 +245,6 @@ class TestCoreSchema:
             "INSERT INTO Staff (FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) "
             "VALUES ('Jane Smith', 'Head Librarian', 'jane_valid@example.com', 'Active', '2020-06-15', 'Library Services')"
         )
-        conn.commit()
         
         # Verify the data was inserted
         result = conn.execute(
