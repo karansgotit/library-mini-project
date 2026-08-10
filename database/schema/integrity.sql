@@ -56,7 +56,7 @@ BEGIN
         SELECT CollectionStatus
         FROM Item
         WHERE ItemID = NEW.ItemID
-    ) IS NOT 'InCollection';
+    ) <> 'InCollection';
 
     SELECT RAISE(ABORT, 'OnlineBook Items cannot have physical Copies')
     WHERE EXISTS (
@@ -85,7 +85,7 @@ BEGIN
         SELECT MembershipStatus
         FROM Member
         WHERE MemberID = NEW.MemberID
-    ) IS NOT 'Active';
+    ) <> 'Active';
 
     SELECT RAISE(ABORT, 'Only Usable Copies may be loaned')
     WHERE (
@@ -93,14 +93,24 @@ BEGIN
         FROM Copy
         WHERE ItemID = NEW.ItemID
           AND CopyNumber = NEW.CopyNumber
-    ) IS NOT 'Usable';
+    ) <> 'Usable';
 
     SELECT RAISE(ABORT, 'Only InCollection Items may be loaned')
     WHERE (
         SELECT CollectionStatus
         FROM Item
         WHERE ItemID = NEW.ItemID
-    ) IS NOT 'InCollection';
+    ) <> 'InCollection';
+
+    SELECT RAISE(ABORT, 'Copy already has an active Loan')
+    WHERE NEW.ReturnDate IS NULL
+      AND EXISTS (
+          SELECT 1
+          FROM Loan
+          WHERE ItemID = NEW.ItemID
+            AND CopyNumber = NEW.CopyNumber
+            AND ReturnDate IS NULL
+      );
 END;
 
 CREATE TRIGGER EventIntegrityInsert
@@ -135,7 +145,7 @@ BEGIN
         SELECT EventStatus
         FROM Event
         WHERE EventID = NEW.EventID
-    ) IS NOT 'Scheduled';
+    ) <> 'Scheduled';
 
     SELECT RAISE(ABORT, 'Event registration capacity has been reached')
     WHERE (
@@ -144,7 +154,10 @@ BEGIN
         WHERE EventID = NEW.EventID
           AND RegistrationStatus = 'Registered'
     ) >= (
-        SELECT COALESCE(Event.RegistrationLimit, Room.Capacity)
+        SELECT CASE
+            WHEN Event.RegistrationLimit IS NULL THEN Room.Capacity
+            ELSE Event.RegistrationLimit
+        END
         FROM Event
         JOIN Room ON Room.RoomID = Event.RoomID
         WHERE Event.EventID = NEW.EventID

@@ -32,8 +32,8 @@ The application supports eight required features:
 8. Ask a librarian for help.
 
 The final implementation uses SQLite and contains 17 tables. The design keeps
-foreign keys, basic domain constraints, one partial unique index, and ten
-straightforward triggers.
+foreign keys, basic domain constraints, supporting indexes, and ten
+straightforward insert triggers.
 
 ## 2. Scope-control decisions
 
@@ -413,11 +413,11 @@ The schema uses:
 - positive-number checks; and
 - simple within-row chronological checks for Loans and Events.
 
-### 14.2 Active-Loan index
+### 14.2 Active-Loan rule
 
-`UniqueActiveLoanPerCopy` prevents more than one Loan with a null ReturnDate
-for the same `(ItemID, CopyNumber)`. It permits any number of returned
-historical Loans.
+`LoanEligibilityInsert` prevents inserting a second Loan with a null
+ReturnDate for the same `(ItemID, CopyNumber)`. It permits any number of
+returned historical Loans.
 
 ### 14.3 Ten insert triggers
 
@@ -428,8 +428,8 @@ The schema keeps ten focused triggers:
    non-OnlineBook Items.
 3. OnlineBookRejectCopyInsert prevents classifying an Item with Copies as an
    OnlineBook.
-4. LoanEligibilityInsert requires an Active Member, a Usable Copy, and an
-   InCollection Item.
+4. LoanEligibilityInsert requires an Active Member, a Usable Copy, an
+   InCollection Item, and no existing active Loan for that Copy.
 5. EventIntegrityInsert prevents room conflicts and limits above Room
    Capacity.
 6. RegistrationCapacityInsert requires a Scheduled Event with remaining

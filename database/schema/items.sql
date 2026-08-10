@@ -115,10 +115,6 @@ CREATE TABLE Loan (
     )
 );
 
-CREATE UNIQUE INDEX UniqueActiveLoanPerCopy
-ON Loan(ItemID, CopyNumber)
-WHERE ReturnDate IS NULL;
-
 CREATE TABLE Fine (
     LoanID        INTEGER NOT NULL,
     FineNumber    INTEGER NOT NULL,
