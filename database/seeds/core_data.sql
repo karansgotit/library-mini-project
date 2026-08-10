@@ -1,31 +1,27 @@
--- Primary owner: Karan | Reviewer: Tushar
--- TODO: Insert at least 10 realistic rows into every shared table.
--- =========================================================================
--- Member
--- =========================================================================
-INSERT INTO Member (MemberID, FullName, Email, Phone, MembershipStatus) VALUES
-(1,  'Emma Watson',     'emma.watson@example.com',     '555-0201', 'Active'),
-(2,  'Liam Chen',       'liam.chen@example.com',       '555-0202', 'Active'),
-(3,  'Olivia Rossi',    'olivia.rossi@example.com',    '555-0203', 'Active'),
-(4,  'Noah Patel',      'noah.patel@example.com',      '555-0204', 'Suspended'),
-(5,  'Ava Kowalski',    'ava.kowalski@example.com',    '555-0205', 'Active'),
-(6,  'Ethan Okafor',    'ethan.okafor@example.com',    '555-0206', 'Expired'),
-(7,  'Sophia Martinez', 'sophia.martinez@example.com', '555-0207', 'Active'),
-(8,  'Mason Dubois',    NULL,                           '555-0208', 'Active'),
-(9,  'Isabella Fischer','isabella.fischer@example.com','555-0209', 'Active'),
-(10, 'James Novak',     'james.novak@example.com',     '555-0210', 'Active');
+-- Realistic library seed data for the reduced project design.
 
--- =========================================================================
+-- Member
+INSERT INTO Member (MemberID, FullName, Email, Phone, MembershipStatus) VALUES
+(1, 'Aisha Khan', 'aisha.khan@example.com', '604-555-0101', 'Active'),
+(2, 'Ben Carter', 'ben.carter@example.com', '604-555-0102', 'Active'),
+(3, 'Chloe Martin', 'chloe.martin@example.com', '604-555-0103', 'Active'),
+(4, 'Daniel Kim', 'daniel.kim@example.com', '604-555-0104', 'Active'),
+(5, 'Elena Garcia', 'elena.garcia@example.com', '604-555-0105', 'Active'),
+(6, 'Farah Ali', 'farah.ali@example.com', '604-555-0106', 'Active'),
+(7, 'Gabriel Wong', 'gabriel.wong@example.com', '604-555-0107', 'Active'),
+(8, 'Hannah Wilson', 'hannah.wilson@example.com', NULL, 'Suspended'),
+(9, 'Isaac Brown', 'isaac.brown@example.com', '604-555-0109', 'Active'),
+(10, 'Julia Singh', 'julia.singh@example.com', NULL, 'Expired');
+
 -- Staff
--- =========================================================================
 INSERT INTO Staff (StaffID, FullName, JobTitle, Email, EmploymentStatus, HireDate, DepartmentName) VALUES
-(1,  'Tushar Mehta',  'Events Manager',        'tushar.mehta@library.org',  'Active',  '2021-03-15', 'Events'),
-(2,  'Karan Shah',    'Operations Lead',       'karan.shah@library.org',    'Active',  '2020-07-01', 'Operations'),
-(3,  'Priya Nair',    'Marketing Coordinator', 'priya.nair@library.org',    'Active',  '2022-01-10', 'Marketing'),
-(4,  'Alex Johnson',  'Logistics Coordinator', 'alex.johnson@library.org',  'Active',  '2019-11-20', 'Operations'),
-(5,  'Maria Garcia',  'Guest Relations Lead',  'maria.garcia@library.org',  'OnLeave', '2023-02-28', 'Guest Services'),
-(6,  'Wei Zhang',     'IT Support Specialist', 'wei.zhang@library.org',     'Active',  '2021-09-05', 'IT'),
-(7,  'Sara Kim',      'Volunteer Coordinator', 'sara.kim@library.org',      'Active',  '2022-06-14', 'Events'),
-(8,  'David Brown',   'Finance Analyst',       'david.brown@library.org',   'Active',  '2018-04-02', 'Finance'),
-(9,  'Layla Hassan',  'Catering Manager',      'layla.hassan@library.org',  'Former',  '2020-12-01', 'Operations'),
-(10, 'Tom Wilson',    'Security Lead',         'tom.wilson@library.org',    'Active',  '2019-08-17', 'Security');
+(1, 'Alice Park', 'Librarian', 'alice.park@library.ca', 'Active', '2019-02-11', 'Circulation'),
+(2, 'Marcus Lee', 'Branch Manager', 'marcus.lee@library.ca', 'Active', '2016-06-20', 'Administration'),
+(3, 'Priya Nair', 'Program Coordinator', 'priya.nair@library.ca', 'Active', '2021-01-18', 'Programs'),
+(4, 'Owen Taylor', 'Library Assistant', 'owen.taylor@library.ca', 'Active', '2023-04-03', 'Circulation'),
+(5, 'Sofia Chen', 'Youth Librarian', 'sofia.chen@library.ca', 'Active', '2020-09-14', 'Youth Services'),
+(6, 'Noah Williams', 'Digital Services Librarian', 'noah.williams@library.ca', 'Active', '2018-11-05', 'Digital Services'),
+(7, 'Maya Patel', 'Community Librarian', 'maya.patel@library.ca', 'Active', '2022-03-28', 'Outreach'),
+(8, 'Liam Thompson', 'Archivist', 'liam.thompson@library.ca', 'OnLeave', '2017-08-07', 'Collections'),
+(9, 'Grace Nguyen', 'Collections Librarian', 'grace.nguyen@library.ca', 'Active', '2015-05-25', 'Collections'),
+(10, 'Ethan Miller', 'Library Technician', 'ethan.miller@library.ca', 'Former', '2014-10-06', 'Technical Services');
