@@ -25,7 +25,7 @@ def find_database() -> Path:
 
 
 def get_connection() -> sqlite3.Connection:
-    """Open a database connection with integrity checking enabled."""
+    """Open a database connection with foreign-key checking enabled."""
     connection = sqlite3.connect(find_database())
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")

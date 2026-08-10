@@ -18,7 +18,6 @@ def make_mock_conn(fetchone_result=None, fetchall_result=None):
     cursor.__exit__.return_value = False
     cursor.fetchone.return_value = fetchone_result
     cursor.fetchall.return_value = fetchall_result or []
-    cursor.lastrowid = 1
 
     conn = MagicMock()
     conn.__enter__.return_value = conn
@@ -34,8 +33,8 @@ def test_find_event_returns_matching_event(mock_get_connection):
     rows = [
         {
             "EventID": 1, 
-            "EventTitle": "Data Science Workshop", 
-            "Description": "ML basics",
+            "EventTitle": "Teen Writing Workshop",
+            "Description": "Creative writing exercises",
             "EventCategory": "Workshop",
             "TargetAudience": "Students",
             "StartDateTime": "2026-08-12 13:00",
@@ -84,7 +83,6 @@ def test_register_for_event_success(mock_get_conn):
     
     conn, cursor = make_mock_conn()
     cursor.fetchone.side_effect = [none_row, row]
-    cursor.lastrowid = 10
     mock_get_conn.return_value = conn
 
     result = register_for_event(member_id=2, event_id=1)
@@ -120,7 +118,6 @@ def test_volunteer_success(mock_get_conn):
 
     conn, cursor = make_mock_conn()
     cursor.fetchone.side_effect = [member, inserted]
-    cursor.lastrowid = 5
     mock_get_conn.return_value = conn
 
     result = volunteer(member_id=1, event_id=4)
@@ -156,7 +153,6 @@ def test_volunteer_general_no_event(mock_get_conn):
 
     conn, cursor = make_mock_conn()
     cursor.fetchone.side_effect = [member, inserted]
-    cursor.lastrowid = 6
     mock_get_conn.return_value = conn
 
     result = volunteer(member_id=1)
@@ -183,7 +179,6 @@ def test_ask_librarian_success(mock_get_conn):
     
     conn, cursor = make_mock_conn()
     cursor.fetchone.side_effect = [member, row]
-    cursor.lastrowid = 7
     mock_get_conn.return_value = conn
 
     result = ask_librarian(member_id=3, question="Wifi not connecting")
@@ -222,7 +217,6 @@ def test_ask_librarian_long_question(mock_get_conn):
     
     conn, cursor = make_mock_conn()
     cursor.fetchone.side_effect = [member, row]
-    cursor.lastrowid = 8
     mock_get_conn.return_value = conn
 
     result = ask_librarian(member_id=3, question=long_question)
@@ -230,4 +224,3 @@ def test_ask_librarian_long_question(mock_get_conn):
     assert result["QuestionText"] == long_question
     assert result["RequestStatus"] == "Pending"
     conn.commit.assert_called_once()
-

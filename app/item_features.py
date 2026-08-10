@@ -16,8 +16,8 @@ def find_item(query: str):
             """
             SELECT ItemID, Title, CreatorName, CollectionStatus
             FROM Item
-            WHERE Title LIKE ? COLLATE NOCASE
-               OR CreatorName LIKE ? COLLATE NOCASE
+            WHERE Title LIKE ?
+               OR CreatorName LIKE ?
             ORDER BY Title
             """,
             (pattern, pattern),
@@ -26,17 +26,7 @@ def find_item(query: str):
 
 
 def borrow_item(member_id: int, item_id: int):
-    """Borrow an available copy of an item for a member.
-
-    NOTE: the original signature took a `copy_id`, but Copy's primary key is
-    the composite (ItemID, CopyNumber) -- there is no single copy_id column
-    to pass in. This version takes the ItemID and automatically finds and
-    borrows an available (Usable, not currently on loan) copy of that item,
-    which matches the docstring "Borrow an available item copy for a
-    member." Confirm this interpretation with the team; if callers are
-    expected to pick a specific physical copy instead, the signature should
-    become borrow_item(member_id, item_id, copy_number).
-    """
+    """Borrow the first available copy of an item for a member."""
     with get_connection() as conn:
         copy_row = conn.execute(
             """
@@ -53,7 +43,6 @@ def borrow_item(member_id: int, item_id: int):
                     AND Loan.ReturnDate IS NULL
               )
             ORDER BY Copy.CopyNumber
-            LIMIT 1
             """,
             (item_id,),
         ).fetchone()
@@ -71,15 +60,17 @@ def borrow_item(member_id: int, item_id: int):
                 INSERT INTO Loan
                     (MemberID, ItemID, CopyNumber, BorrowDate, DueDate, ReturnDate)
                 VALUES (?, ?, ?, ?, ?, NULL)
+                RETURNING LoanID
                 """,
                 (member_id, item_id, copy_number, borrow_date, due_date),
             )
+            loan_row = cursor.fetchone()
             conn.commit()
         except sqlite3.IntegrityError as exc:
             raise ValueError(str(exc)) from exc
 
         return {
-            "LoanID": cursor.lastrowid,
+            "LoanID": loan_row["LoanID"],
             "MemberID": member_id,
             "ItemID": item_id,
             "CopyNumber": copy_number,
@@ -115,7 +106,7 @@ def return_item(loan_id: int):
         return dict(updated)
 
 
-def donate_item(member_id: int, title: str):
+def donate_item(member_id: int, description: str):
     """Record a proposed item donation from a member."""
     with get_connection() as conn:
         member = conn.execute(
@@ -131,16 +122,18 @@ def donate_item(member_id: int, title: str):
                 (MemberID, OfferDateTime, OfferDescription, OfferStatus,
                  ProducedItemID, ProducedCopyNumber)
             VALUES (?, ?, ?, 'Pending', NULL, NULL)
+            RETURNING DonationOfferID
             """,
-            (member_id, offer_datetime, title),
+            (member_id, offer_datetime, description),
         )
+        donation_row = cursor.fetchone()
         conn.commit()
 
         return {
-            "DonationOfferID": cursor.lastrowid,
+            "DonationOfferID": donation_row["DonationOfferID"],
             "MemberID": member_id,
             "OfferDateTime": offer_datetime,
-            "OfferDescription": title,
+            "OfferDescription": description,
             "OfferStatus": "Pending",
             "ProducedItemID": None,
             "ProducedCopyNumber": None,

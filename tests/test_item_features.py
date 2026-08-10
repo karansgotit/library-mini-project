@@ -18,7 +18,6 @@ def make_mock_conn(fetchone_result=None, fetchall_result=None):
     cursor = MagicMock()
     cursor.fetchone.return_value = fetchone_result
     cursor.fetchall.return_value = fetchall_result or []
-    cursor.lastrowid = 1
 
     conn = MagicMock()
     conn.__enter__.return_value = conn
@@ -94,10 +93,7 @@ class TestItemFeatures:
         copy_row = {"CopyNumber": 1}
         
         conn, cursor = make_mock_conn()
-        # First call: get available copy
-        # Second call: get loan details (will be None since we just want to verify insert)
-        cursor.fetchone.side_effect = [copy_row, None]
-        cursor.lastrowid = 1
+        cursor.fetchone.side_effect = [copy_row, {"LoanID": 1}]
         mock_get_connection.return_value = conn
 
         result = borrow_item(member_id=1, item_id=1)
@@ -125,8 +121,7 @@ class TestItemFeatures:
         """Test that LOAN_PERIOD_DAYS is used correctly."""
         copy_row = {"CopyNumber": 1}
         conn, cursor = make_mock_conn()
-        cursor.fetchone.side_effect = [copy_row, None]
-        cursor.lastrowid = 1
+        cursor.fetchone.side_effect = [copy_row, {"LoanID": 1}]
         mock_get_connection.return_value = conn
 
         result = borrow_item(member_id=1, item_id=1)
@@ -187,11 +182,10 @@ class TestItemFeatures:
         member = {"MemberID": 1, "FullName": "Test Member"}
         
         conn, cursor = make_mock_conn()
-        cursor.fetchone.return_value = member
-        cursor.lastrowid = 1
+        cursor.fetchone.side_effect = [member, {"DonationOfferID": 1}]
         mock_get_connection.return_value = conn
 
-        result = donate_item(member_id=1, title="Test Book Donation")
+        result = donate_item(member_id=1, description="Test Book Donation")
 
         assert result["MemberID"] == 1
         assert result["OfferDescription"] == "Test Book Donation"
@@ -208,18 +202,16 @@ class TestItemFeatures:
         mock_get_connection.return_value = conn
 
         with pytest.raises(ValueError, match="No member found with id"):
-            donate_item(member_id=999, title="Test Donation")
+            donate_item(member_id=999, description="Test Donation")
 
     @patch("app.item_features.get_connection")
     def test_donate_item_offer_status_pending(self, mock_get_connection):
         """Test that donation offer status is always 'Pending' initially."""
         member = {"MemberID": 1, "FullName": "Test Member"}
         conn, cursor = make_mock_conn()
-        cursor.fetchone.return_value = member
-        cursor.lastrowid = 1
+        cursor.fetchone.side_effect = [member, {"DonationOfferID": 1}]
         mock_get_connection.return_value = conn
 
-        result = donate_item(member_id=1, title="Test Book")
+        result = donate_item(member_id=1, description="Test Book")
 
         assert result["OfferStatus"] == "Pending"
-

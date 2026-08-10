@@ -16,8 +16,8 @@ def find_event(query: str):
                    TargetAudience, StartDateTime, EndDateTime, EventStatus,
                    RegistrationLimit, RoomID, OrganizerStaffID
             FROM Event
-            WHERE EventTitle LIKE ? COLLATE NOCASE
-               OR Description LIKE ? COLLATE NOCASE
+            WHERE EventTitle LIKE ?
+               OR Description LIKE ?
             ORDER BY StartDateTime ASC
             """,
             (pattern, pattern),
@@ -75,15 +75,17 @@ def volunteer(member_id: int, event_id: int = None):
                 INSERT INTO VolunteerApplication
                     (MemberID, EventID, ApplicationDateTime, ApplicationStatus)
                 VALUES (?, ?, ?, 'Pending')
+                RETURNING VolunteerApplicationID
                 """,
                 (member_id, event_id, applied_at),
             )
+            volunteer_row = cursor.fetchone()
             conn.commit()
         except sqlite3.IntegrityError as exc:
             raise ValueError(str(exc)) from exc
 
         return {
-            "VolunteerApplicationID": cursor.lastrowid,
+            "VolunteerApplicationID": volunteer_row["VolunteerApplicationID"],
             "MemberID": member_id,
             "EventID": event_id,
             "ApplicationDateTime": applied_at,
@@ -107,13 +109,15 @@ def ask_librarian(member_id: int, question: str):
                 (MemberID, StaffID, RequestDateTime, QuestionText,
                  RequestStatus, ResolvedDateTime)
             VALUES (?, NULL, ?, ?, 'Pending', NULL)
+            RETURNING HelpRequestID
             """,
             (member_id, requested_at, question),
         )
+        request_row = cursor.fetchone()
         conn.commit()
 
         return {
-            "HelpRequestID": cursor.lastrowid,
+            "HelpRequestID": request_row["HelpRequestID"],
             "MemberID": member_id,
             "StaffID": None,
             "RequestDateTime": requested_at,
