@@ -89,7 +89,7 @@ python3 database/build_database.py
 Run the application:
 
 ```bash
-python3 app/main.py
+python3 -m app.main
 ```
 
 Run the tests:
