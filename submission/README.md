@@ -12,8 +12,7 @@ python3 -m app.main
 ```
 
 Choose an option from 1 to 9 and follow the prompts. The sample database uses
-member IDs 1 to 10. Item and event searches can be used to find the IDs needed
-by the other options.
+member IDs 1 to 10.
 
 The application uses only Python's built-in `sqlite3` module, so no extra
 packages are required.
